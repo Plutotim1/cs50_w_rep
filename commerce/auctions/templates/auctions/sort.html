@@ -1,0 +1,15 @@
+{% extends 'auctions/layout.html' %}
+
+{% block title %}
+    sort listings
+{% endblock %}
+
+
+{% block body %}
+    <h2>Sort by:</h2>
+    {% for category in categorys %}
+    <form action="/sort/by/{{category}}" method="GET">
+        <button type="submit">{{category}}</button>
+    </form>
+    {% endfor %}
+{% endblock %}

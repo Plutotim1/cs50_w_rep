@@ -1,0 +1,77 @@
+{% extends 'auctions/layout.html' %}
+
+{% block title %}
+    {{listing.title}}
+{% endblock %}
+
+
+
+{% block body %}
+    {%if listing.closed %}
+        <h3>listing closed</h3>
+        {% if listing.winner == request.user %}
+        <h1>You won this Auction!</h1>
+        {% endif %}
+    {% endif %}
+    <div name="details">
+        <h4>{{listing.title}}</h4>
+        <img src="{{listing.image_href}}" href="{{ listing.image_href}}" alt="{{listing.title}}" height="600">
+        <p><strong>{{ listing.category }}</strong></p>
+        <p>{{listing.description}}</p>
+        {% if listing.starting_bid > listing.current_price %}
+            <h5>{{listing.starting_bid}}$</h5>
+        {% else %}
+            <h5>{{ listing.current_price }}$</h5>
+        {% endif %}
+    </div>
+    {% if not listing.closed %}
+        {% if request.user.is_authenticated %}
+        <div>
+            <form action="/watch/add" method="POST">
+                {% csrf_token %}
+                <button type="submit">Add to Watchlist!</button>
+                <input value="{{ listing.auction_id }}" type="hidden" name="auction_id">
+            </form>
+        </div>
+        <div name="bid">
+            <form action="/bid" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="auction_id" value="{{ listing.auction_id }}">
+                <input type="number" name="bid_value" value="0.0" step="0.01" 
+                {% if listing.current_price > listing.starting_bid %}
+                min="{{ listing.current_price }}">
+                {% else %}
+                min="{{ listing.starting_bid}}">
+                {% endif %}
+                <button type="submit" class="btn btn-primary">Submit bid</button>
+            </form>
+        </div>
+        <div name="comment">
+            <form action="/comment" method="POST">
+                {% csrf_token %}
+                <input type="hidden" value="{{listing.auction_id}}" name="auction">
+                <input type="text" maxlength="1024" name="content">
+                <button type="submit" class="btn btn-primary">Submit comment!</button>
+            </form>
+        </div>
+        {% endif %}
+        {% if request.user == listing.creator %} 
+        <div>
+            <form action="/closeauction" method="POST">
+                {% csrf_token %}
+                <input value="{{listing.auction_id}}" type="hidden" name="auction_id">
+                <button type="submit" >
+                    close Auction!
+                </button>
+            </form>
+        </div>
+        {% endif %}
+        <h2>Comments:</h2>
+        {% for comment in comments %}
+        <div>
+            <h6>{{comment.User}}</h6>
+            {{comment.content}}
+        </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

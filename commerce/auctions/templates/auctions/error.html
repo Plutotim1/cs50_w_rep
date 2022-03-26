@@ -1,0 +1,9 @@
+{% extends 'auctions/layout.html' %}
+
+{% block title %}
+    ERROR!
+{% endblock %}
+
+{% block body %}
+    {{error_message | safe}}
+{% endblock %}

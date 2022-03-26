@@ -1,0 +1,30 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+    <ul>
+    {% for listing in listings %}
+    {% if not listing.closed %}
+    <li>
+    <form action="/listing/{{listing.auction_id}}" method="GET">
+    <div>
+    <button width="400" height="400" type="submit" class="button1234">   
+        <h4>{{listing.title}}</h4>
+        <img src="{{listing.image_href}}" href="{{ listing.image_href}}" alt="{{listing.title}}" height="200">
+        <p>{{listing.description}}</p>
+        {% if listing.starting_bid < listing.current_price %}
+            <h5>{{ listing.current_price }}$</h5>
+        {% else %}
+            <h5>{{ listing.starting_bid }}$</h5>
+        {% endif %}
+    </button>
+    </div>
+    </form>
+    </li>
+    {% endif %}
+    {% endfor %}
+    </ul>
+{% endblock %}
+
+
+
